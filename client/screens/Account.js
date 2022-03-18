@@ -4,9 +4,10 @@ import {
   View,
   TextInput,
   Text,
-  Button,
+  Image,
   TouchableOpacity,
 } from 'react-native';
+
 import UserInput from '../components/auth/UserInput';
 import React, { useState, useContext, useEffect } from 'react';
 import SubmitButton from '../components/auth/SubmitButton';
@@ -16,13 +17,22 @@ import { AuthContext } from '../context/auth';
 import CircleLogo from '../components/auth/CircleLogo';
 import { FontAwesome5 } from '@expo/vector-icons';
 
+import * as ImagePicker from 'expo-image-picker';
+
 export default function Account({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [image, setImage] = useState({});
+
   const [role, setRole] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [uploadImage, setUploadImage] = useState('');
+  const [image, setImage] = useState({
+    url: '',
+    public_Id: '',
+  });
+
   //context
   const [state, setState] = useContext(AuthContext);
 
@@ -67,6 +77,31 @@ export default function Account({ navigation }) {
     }
   };
 
+  const handleUpload = async () => {
+    let permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    //console.log(permissionsResult)
+    if (permissionResult.granted === false) {
+      alert('Camera access is required');
+      return;
+    }
+
+    //get Image from image library ()
+    let pickerResult = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      base64: true,
+    });
+    console.log(pickerResult);
+
+    if (pickerResult.cancelled === true) {
+      return;
+    }
+
+    let base64Image = `data:image/jpg;base64,${pickerResult.base64}`;
+    setUploadImage(base64Image);
+  };
+
   const loadfromAsyncStorage = async () => {
     let data = await AsyncStorage.getItem('@auth');
     console.log('DATA FROM ASYNC', data);
@@ -79,13 +114,49 @@ export default function Account({ navigation }) {
       <CircleLogo>
         {image && image.url ? (
           <Image
-            source={{uri: image.url}}
-            style={{ width: 200, height: 200, marginVertical: 20 }}
+            source={{ uri: image.url }}
+            style={{
+              width: 190,
+              height: 190,
+              marginVertical: 20,
+              borderRadius: 100,
+            }}
+          />
+        ) : uploadImage ? (
+          <Image
+            source={{ uri: uploadImage }}
+            style={{
+              width: 190,
+              height: 190,
+              marginVertical: 20,
+              borderRadius: 100,
+            }}
           />
         ) : (
-          <FontAwesome5 name="camera" size={100} color="black" />
+          <TouchableOpacity onPress={() => handleUpload()}>
+            <FontAwesome5 name="camera" size={50} color="orange" />
+          </TouchableOpacity>
         )}
       </CircleLogo>
+
+      {image && image.url ? (
+        <TouchableOpacity onPress={() => handleUpload()}>
+          <FontAwesome5
+            name="camera"
+            size={50}
+            color="orange"
+            style={{
+              justifyContent: 'center',
+              marginTop: -5,
+              marginBottom: 10,
+              alignSelf: 'center',
+            }}
+          />
+        </TouchableOpacity>
+      ) : (
+        <></>
+      )}
+
       <Text style={{ textAlign: 'center', fontSize: 30, paddingBottom: 10 }}>
         {name}
       </Text>

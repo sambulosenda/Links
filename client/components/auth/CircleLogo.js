@@ -1,38 +1,48 @@
-import React from "react";
-import { View, Image } from "react-native";
-
-
-
-
+import React from 'react';
+import { View, Image } from 'react-native';
 
 const CircleLogo = ({ children }) => (
+  <View
+    style={{
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop: 10,
+      marginBottom: 50,
+    }}
+  >
     <View
       style={{
-        justifyContent: "center",
-        alignItems: "center",
-        paddingTop: 10,
+        backgroundColor: '#fff',
+        height: 190,
+        width: 190,
+        borderRadius: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <View
         style={{
-          backgroundColor: "#fff",
+          backgroundColor: 'white',
+          borderColor: '#f8f8f8',
+          borderWidth: '4',
           height: 190,
           width: 190,
+          alignItems: 'center',
+          justifyContent: 'center',
           borderRadius: 100,
-          justifyContent: "center",
-          alignItems: "center",
         }}
       >
         {children ? (
           children
         ) : (
           <Image
-          source={require("../../assets/favicon.png")}
+            source={require('../../assets/favicon.png')}
             style={{ width: 200, height: 200, marginVertical: 20 }}
           />
         )}
       </View>
     </View>
-  );
-  
-  export default CircleLogo;
+  </View>
+);
+
+export default CircleLogo;
