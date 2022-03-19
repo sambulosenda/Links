@@ -1,19 +1,18 @@
-
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const nanoid = require("nanoid");
-const expressJwt = require('express-jwt')
+const expressJwt = require("express-jwt");
 
 // sendgrid
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 
-//middleware
-exports.requireSignin = expressJwt ({
-  secret: process.env.JWT_SECRET, 
-  algorithms: ['HS256'],
-})
+// middleware
+exports.requireSignin = expressJwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
+});
 
 exports.signup = async (req, res) => {
   console.log("HIT SIGNUP");
@@ -123,7 +122,7 @@ exports.forgotPassword = async (req, res) => {
     from: process.env.EMAIL_FROM,
     to: user.email,
     subject: "Password reset code",
-    html: "<h1>Your password  reset code is: {resetCode}</h1>"
+    html: "<h1>Your password  reset code is: {resetCode}</h1>",
   };
   // send email
   try {
@@ -162,7 +161,6 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
-
 exports.uploadImage = async (req, res) => {
-  console.log("upload image > user_id", req.user._id)
-}
+  console.log("upload image > user _id", req.user._id);
+};
