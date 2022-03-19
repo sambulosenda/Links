@@ -28,6 +28,7 @@ export default function Account({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   const [uploadImage, setUploadImage] = useState('');
+
   const [image, setImage] = useState({
     url: '',
     public_Id: '',
@@ -52,6 +53,7 @@ export default function Account({ navigation }) {
       setLoading(false);
       return;
     }
+
     // console.log("SIGNUP REQUEST", name, email, password);
     try {
       const { data } = await axios.post(`/signin`, {
@@ -100,6 +102,27 @@ export default function Account({ navigation }) {
 
     let base64Image = `data:image/jpg;base64,${pickerResult.base64}`;
     setUploadImage(base64Image);
+
+    let token = state && state.token ? state.token : "";
+
+    // send to backend for uploading to cloudinary
+    const { data } = await axios.post(
+      '/upload-image',
+      {
+        image: base64Image,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log('UPLOADED RESPONSE => ', data);
+
+
+
+
+    //update use info in the context and async storage
   };
 
   const loadfromAsyncStorage = async () => {

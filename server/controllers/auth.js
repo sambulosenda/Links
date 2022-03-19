@@ -3,9 +3,17 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const nanoid = require("nanoid");
+const expressJwt = require('express-jwt')
+
 // sendgrid
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_KEY);
+
+//middleware
+exports.requireSignin = expressJwt ({
+  secret: process.env.JWT_SECRET, 
+  algorithms: ['HS256'],
+})
 
 exports.signup = async (req, res) => {
   console.log("HIT SIGNUP");
@@ -153,3 +161,8 @@ exports.resetPassword = async (req, res) => {
     console.log(err);
   }
 };
+
+
+exports.uploadImage = async (req, res) => {
+  console.log("upload image > user_id", req.user._id)
+}
