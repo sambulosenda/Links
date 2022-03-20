@@ -177,6 +177,28 @@ exports.uploadImage = async (req, res) => {
       public_id: nanoid(),
       resource_type: "jpg",
     });
+
+    //Finds the user based on the id and updates the image
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        image: {
+          public_id: result.public_id,
+          url: result.secure_url,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    return res.json({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      image: user.image,
+    });
+
     console.log("CLOUDINARY RESULT", result);
   } catch (err) {
     console.log(err);

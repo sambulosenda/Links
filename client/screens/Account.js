@@ -43,6 +43,7 @@ export default function Account({ navigation }) {
       setName(name);
       setEmail(email);
       setRole(role);
+      setImage(image);
     }
   }, [state]);
 
@@ -82,55 +83,42 @@ export default function Account({ navigation }) {
   const handleUpload = async () => {
     let permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
-    //console.log(permissionsResult)
+    // console.log(permissionResult);
+    // return;
     if (permissionResult.granted === false) {
       alert('Camera access is required');
       return;
     }
-
-    //get Image from image library ()
+    // get image from image
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
       base64: true,
     });
-    console.log(pickerResult);
-
+    // console.log("PICKER RESULT => ", pickerResult);
     if (pickerResult.cancelled === true) {
       return;
     }
 
+    // save to state for preview
     let base64Image = `data:image/jpg;base64,${pickerResult.base64}`;
     setUploadImage(base64Image);
 
-    let token = state && state.token ? state.token : "";
-
     // send to backend for uploading to cloudinary
-    const { data } = await axios.post(
-      '/upload-image',
-      {
-        image: base64Image,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+
+    const { data } = await axios.post('/upload-image', {
+      image: base64Image,
+    });
     console.log('UPLOADED RESPONSE => ', data);
-
-
-
-
-    //update use info in the context and async storage
+    // update async storage
+    const as = JSON.parse(await AsyncStorage.getItem('@auth')); // {user: {}, token: ''}
+    as.user = data;
+    await AsyncStorage.setItem('@auth', JSON.stringify(as));
+    // update context
+    setState({ ...state, user: data });
+    setImage(data.image);
+    alert('👍 Profile image saved');
   };
-
-  const loadfromAsyncStorage = async () => {
-    let data = await AsyncStorage.getItem('@auth');
-    console.log('DATA FROM ASYNC', data);
-  };
-
-  loadfromAsyncStorage();
 
   return (
     <View style={styles.container}>
