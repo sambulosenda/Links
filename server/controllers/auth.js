@@ -3,10 +3,18 @@ const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const nanoid = require("nanoid");
 const expressJwt = require("express-jwt");
+const cloundinary = require("cloudinary");
 
 // sendgrid
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_KEY);
+
+//cloundinary
+cloundinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
 
 // middleware
 exports.requireSignin = expressJwt({
@@ -162,5 +170,15 @@ exports.resetPassword = async (req, res) => {
 };
 
 exports.uploadImage = async (req, res) => {
-  console.log("upload image > user _id", req.user._id);
+  // console.log("upload image > user _id", req.user._id);
+  try {
+    const result = await cloundinary.uploader.upload(req.body.image, {
+      folder: "user-images",
+      public_id: nanoid(),
+      resource_type: "jpg",
+    });
+    console.log("CLOUDINARY RESULT", result);
+  } catch (err) {
+    console.log(err);
+  }
 };
