@@ -3,14 +3,14 @@ const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const nanoid = require("nanoid");
 const expressJwt = require("express-jwt");
-const cloundinary = require("cloudinary");
+const cloudinary = require("cloudinary");
 
 // sendgrid
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 
-//cloundinary
-cloundinary.config({
+// cloudinary
+cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
@@ -130,7 +130,10 @@ exports.forgotPassword = async (req, res) => {
     from: process.env.EMAIL_FROM,
     to: user.email,
     subject: "Password reset code",
-    html: "<h1>Your password  reset code is: {resetCode}</h1>",
+    html: `
+    <h4>Enter this code in the app to reset password</h4>
+    <h1 style="color:black;">${resetCode}</h1>
+    `,
   };
   // send email
   try {
@@ -172,13 +175,11 @@ exports.resetPassword = async (req, res) => {
 exports.uploadImage = async (req, res) => {
   // console.log("upload image > user _id", req.user._id);
   try {
-    const result = await cloundinary.uploader.upload(req.body.image, {
-      folder: "user-images",
+    const result = await cloudinary.uploader.upload(req.body.image, {
       public_id: nanoid(),
       resource_type: "jpg",
     });
-
-    //Finds the user based on the id and updates the image
+    // console.log("CLOUDINARY RESULT => ", result);
     const user = await User.findByIdAndUpdate(
       req.user._id,
       {
@@ -187,19 +188,37 @@ exports.uploadImage = async (req, res) => {
           url: result.secure_url,
         },
       },
-      {
-        new: true,
-      }
+      { new: true }
     );
-
+    // send response
     return res.json({
       name: user.name,
       email: user.email,
       role: user.role,
       image: user.image,
     });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-    console.log("CLOUDINARY RESULT", result);
+exports.updatePassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (password && password.length < 6) {
+      return res.json({
+        error: "Password is required and should be min 6 characters long",
+      });
+    } else {
+      // update db
+      const hashedPassword = await hashPassword(password);
+      const user = await User.findByIdAndUpdate(req.user._id, {
+        password: hashedPassword,
+      });
+      user.password = undefined;
+      user.secret = undefined;
+      return res.json(user);
+    }
   } catch (err) {
     console.log(err);
   }

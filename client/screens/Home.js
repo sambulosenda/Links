@@ -8,8 +8,7 @@ const Home = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Text style={{textAlign: 'center', fontSize: 20,}}>Home</Text>
-
+      <Text style={{ textAlign: 'center', fontSize: 20 }}>Home</Text>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <FooterTabs />
       </View>

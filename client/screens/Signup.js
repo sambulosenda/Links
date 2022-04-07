@@ -31,6 +31,7 @@ export default function Signup({ navigation }) {
       setLoading(false);
       return;
     }
+    
     console.log("SIGNUP REQUEST", name, email, password);
     try {
       const { data } = await axios.post("/signup", {

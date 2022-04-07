@@ -5,11 +5,12 @@ import Signup from '../../screens/Signup';
 import Login from '../../screens/Login';
 import Home from '../../screens/Home';
 import Links from '../../screens/Links';
-import Post from '../../screens/Post';
 
 import { AuthContext } from '../../context/auth';
 import HeaderTabs from './HeaderTabs';
 import Account from '../../screens/Account';
+import ForgotPassword from '../../screens/ForgotPassword';
+import PostLink from '../../screens/PostLink';
 
 const Stack = createNativeStackNavigator();
 
@@ -52,7 +53,7 @@ export default function ScreensNav() {
 
           <Stack.Screen
             name="Post"
-            component={Post}
+            component={PostLink}
             options={{
               headerBackTitle: 'Back',
             }}
@@ -62,6 +63,15 @@ export default function ScreensNav() {
         <>
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Signup" component={Signup} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen
+            name="PostLink"
+            component={PostLink}
+            options={{
+              title: 'Post',
+              headerRight: () => <HeaderTabs />,
+            }}
+          />
         </>
       )}
     </Stack.Navigator>

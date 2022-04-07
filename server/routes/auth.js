@@ -10,7 +10,8 @@ const {
   forgotPassword,
   resetPassword,
   uploadImage, 
-  requireSignin
+  requireSignin, 
+  updatePassword,
 } = require("../controllers/auth");
 
 router.get("/", (req, res) => {
@@ -24,5 +25,6 @@ router.post("/signin", signin);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.post("/upload-image", requireSignin, uploadImage)
+router.post('/update-password', requireSignin, updatePassword)
 
 module.exports = router;

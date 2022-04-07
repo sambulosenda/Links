@@ -6,6 +6,7 @@ import { Divider } from 'react-native-elements';
 
 export const Tab = ({ text, name, handlePress, screenName, routeName }) => {
   const activeScreenColor = screenName === routeName && 'orange';
+
   return (
     <TouchableOpacity onPress={handlePress}>
       <>
@@ -13,7 +14,7 @@ export const Tab = ({ text, name, handlePress, screenName, routeName }) => {
           name={name}
           size={25}
           style={{ marginBottom: 3, alignSelf: 'center' }}
-          color ={activeScreenColor}
+          color={activeScreenColor}
         />
 
         <Text>{text}</Text>
@@ -55,8 +56,8 @@ const FooterTabs = () => {
         <Tab
           text="Links"
           name="list-ol"
-          handlePress={() => navigation.navigate('Links')}
-          screenName="Links"
+          handlePress={() => navigation.navigate('PostLink')}
+          screenName="PostLink"
           routeName={route.name}
         />
 

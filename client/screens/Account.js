@@ -28,6 +28,7 @@ export default function Account({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   const [uploadImage, setUploadImage] = useState('');
+  
 
   const [image, setImage] = useState({
     url: '',
@@ -44,37 +45,26 @@ export default function Account({ navigation }) {
       setEmail(email);
       setRole(role);
       setImage(image);
+      
     }
   }, [state]);
 
+
   const handleSubmit = async () => {
     setLoading(true);
-    if (!email || !password) {
-      alert('Please fill in all fields');
-      setLoading(false);
-      return;
-    }
-
-    // console.log("SIGNUP REQUEST", name, email, password);
     try {
-      const { data } = await axios.post(`/signin`, {
-        email,
-        password,
-      });
+      const { data } = await axios.post(`/update-password`, { password } )
+      if(data.error) {
+        alert(data.error)
+        setLoading(false);
+      } else {
+        alert("Password Updated")
+        setLoading(false);
+        setPassword("");
+      }
 
-      //save in context
-      setState(data);
-
-      //Save response to AsyncStorage
-      await AsyncStorage.setItem('@auth', JSON.stringify(data));
-
-      setLoading(false);
-      console.log('SIGN IN SUCESSS', data);
-      alert('Signup Successful');
-
-      //redirect home
-      navigation.navigate('Home');
     } catch (err) {
+      alert("Password update failed. Try again")
       console.log(err);
       setLoading(false);
     }
@@ -110,6 +100,8 @@ export default function Account({ navigation }) {
       image: base64Image,
     });
     console.log('UPLOADED RESPONSE => ', data);
+
+
     // update async storage
     const as = JSON.parse(await AsyncStorage.getItem('@auth')); // {user: {}, token: ''}
     as.user = data;
