@@ -19,10 +19,7 @@ export default function Signup({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  //context
   const [state, setState] = useContext(AuthContext);
-
-  //console.log('NAVIGATION', navigation)
 
   const handleSubmit = async () => {
     setLoading(true);
